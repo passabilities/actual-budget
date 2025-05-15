@@ -954,7 +954,12 @@ async function processBankSyncDownload(
       useStrictIdChecking,
     );
 
-    if (accountBalance) await updateAccountBalance(id, accountBalance);
+    const expectedBalance = accountBalance?.find(
+      b => b.balanceType === 'expected',
+    );
+    if (expectedBalance) {
+      await updateAccountBalance(id, expectedBalance.balanceAmount.amount);
+    }
 
     return result;
   });
