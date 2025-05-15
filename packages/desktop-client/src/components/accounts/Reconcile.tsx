@@ -132,15 +132,19 @@ export function ReconcileMenu({
     query: balanceQuery.query.filter({ cleared: true }),
   });
   const format = useFormat();
-  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string>(
+    format(
+      account.balance_current ?? clearedBalance ?? '',
+      'financial',
+    ).toString(),
+  );
 
   function onSubmit() {
     if (inputValue === '') {
       return;
     }
 
-    const amount =
-      inputValue != null ? currencyToInteger(inputValue) : clearedBalance;
+    const amount = currencyToInteger(inputValue);
 
     onReconcile(amount);
     onClose();
@@ -154,16 +158,14 @@ export function ReconcileMenu({
           reconcile with:
         </Trans>
       </Text>
-      {clearedBalance != null && (
-        <InitialFocus>
-          <Input
-            defaultValue={format(clearedBalance, 'financial')}
-            onChangeValue={setInputValue}
-            style={{ margin: '7px 0' }}
-            onEnter={onSubmit}
-          />
-        </InitialFocus>
-      )}
+      <InitialFocus>
+        <Input
+          value={inputValue}
+          onChangeValue={setInputValue}
+          style={{ margin: '7px 0' }}
+          onEnter={onSubmit}
+        />
+      </InitialFocus>
       <Button variant="primary" onPress={onSubmit}>
         <Trans>Reconcile</Trans>
       </Button>
